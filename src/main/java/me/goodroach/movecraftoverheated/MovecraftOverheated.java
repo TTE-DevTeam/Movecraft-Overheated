@@ -3,6 +3,7 @@ package me.goodroach.movecraftoverheated;
 import me.goodroach.movecraftoverheated.commands.CheckHeatCommand;
 import me.goodroach.movecraftoverheated.config.Settings;
 import me.goodroach.movecraftoverheated.disaster.ExplosionDisaster;
+import me.goodroach.movecraftoverheated.listener.BlockListener;
 import me.goodroach.movecraftoverheated.listener.CraftListener;
 import me.goodroach.movecraftoverheated.listener.WeaponListener;
 import me.goodroach.movecraftoverheated.tracking.GraphManager;
@@ -45,6 +46,7 @@ public final class MovecraftOverheated extends JavaPlugin {
         //Listeners
         getServer().getPluginManager().registerEvents(new WeaponListener(heatManager), this);
         getServer().getPluginManager().registerEvents(new CraftListener(heatManager), this);
+        getServer().getPluginManager().registerEvents(new BlockListener(heatManager), this);
 
         // Plugin startup logic
         initConfig();

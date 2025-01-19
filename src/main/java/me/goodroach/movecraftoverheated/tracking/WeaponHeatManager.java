@@ -2,6 +2,7 @@ package me.goodroach.movecraftoverheated.tracking;
 
 import me.goodroach.movecraftoverheated.weapons.Weapon;
 import org.apache.commons.lang.NotImplementedException;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -9,11 +10,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static me.goodroach.movecraftoverheated.MovecraftOverheated.dispenserHeatUUID;
@@ -106,6 +105,25 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         for (DispenserWeapon dispenser : trackedDispensers.values()) {
             // Negative value as it is removing heat
             addDispenserHeat(dispenser, -1 * weapon.heatDissipation());
+        }
+    }
+
+    public void removeDispenser(Location location) {
+
+    }
+
+    public void removeDispenser(UUID dispenserUUID) {
+        if (dispenserUUID == null) {
+            return;
+        }
+        DispenserWeapon dispenserWeapon = this.trackedDispensers.getOrDefault(dispenserUUID, null);
+        if (dispenserWeapon == null) {
+            return;
+        } else {
+            this.weapons.values().forEach(dispenserGraph -> {
+                dispenserGraph.removeDispenser(dispenserWeapon);
+            });
+            this.trackedDispensers.remove(dispenserUUID);
         }
     }
 
