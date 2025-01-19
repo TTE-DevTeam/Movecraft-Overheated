@@ -74,27 +74,30 @@ public class CheckHeatCommand implements CommandExecutor {
         baseMessage = baseMessage.append(Component.text("Current dispenser heat at: "))
                 .append(Component.text(heat));
 
-        // Get UUID and attach it to the message
-        String uuidString = container.get(dispenserHeatUUID, PersistentDataType.STRING);
-        if (uuidString == null) {
-            baseMessage = baseMessage.append(Component.text("\nUUID: Not found in dispenser data."));
-            player.sendMessage(baseMessage);
-            return true;
-        }
+        DispenserWeapon trackedDispenser = heatManager.getByLocation(dispenser.getLocation());
+        UUID uuid = null;
+        if (trackedDispenser == null) {
+            // Get UUID and attach it to the message
+            String uuidString = container.get(dispenserHeatUUID, PersistentDataType.STRING);
+            if (uuidString == null) {
+                baseMessage = baseMessage.append(Component.text("\nUUID: Not found in dispenser data."));
+                player.sendMessage(baseMessage);
+                return true;
+            }
 
-        UUID uuid;
-        try {
-            uuid = UUID.fromString(uuidString);
-            baseMessage = baseMessage.append(Component.text("\nUUID: ")).append(Component.text(uuid.toString()));
-        } catch (IllegalArgumentException e) {
-            baseMessage = baseMessage.append(Component.text("\nInvalid UUID format: " + uuidString));
-            player.sendMessage(baseMessage);
-            return true;
-        }
+            try {
+                uuid = UUID.fromString(uuidString);
+                baseMessage = baseMessage.append(Component.text("\nUUID: ")).append(Component.text(uuid.toString()));
+            } catch (IllegalArgumentException e) {
+                baseMessage = baseMessage.append(Component.text("\nInvalid UUID format: " + uuidString));
+                player.sendMessage(baseMessage);
+                return true;
+            }
 
-        // Get location and attach it to the message
-        Map<UUID, DispenserWeapon> trackedDispensers = heatManager.getTrackedDispensers();
-        DispenserWeapon trackedDispenser = trackedDispensers.get(uuid);
+            // Get location and attach it to the message
+            Map<UUID, DispenserWeapon> trackedDispensers = heatManager.getTrackedDispensers();
+            trackedDispenser = trackedDispensers.get(uuid);
+        }
 
         if (trackedDispenser == null) {
             baseMessage = baseMessage.append(Component.text("\nNo tracked dispenser found for UUID: " + uuid));
