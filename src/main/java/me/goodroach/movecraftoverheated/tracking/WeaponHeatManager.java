@@ -21,7 +21,9 @@ import static me.goodroach.movecraftoverheated.MovecraftOverheated.heatKey;
 public class WeaponHeatManager extends BukkitRunnable implements Listener {
     private final GraphManager graphManager;
     private Map<Material, DispenserGraph> weapons = new HashMap<>();
+    // TODO: Are synchronized maps necessary? Are we ever accessing this async?
     private final Map<UUID, DispenserWeapon> trackedDispensers = new ConcurrentHashMap();
+    private final Map<Location, DispenserWeapon> location2Dispenser = Collections.synchronizedMap(new WeakHashMap<>());
 
     public WeaponHeatManager(GraphManager graphManager) {
         this.graphManager = graphManager;
@@ -29,6 +31,9 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
 
     @Override
     public void run() {
+        // Update location to weapon cache first!
+        location2Dispenser.clear();
+        trackedDispensers.values().forEach(dispenserWeapon -> location2Dispenser.put(dispenserWeapon.getLocation(), dispenserWeapon));
         long time = System.currentTimeMillis();
         for (DispenserGraph graph : weapons.values()) {
             coolDispensers(graph.getWeapon());
@@ -38,6 +43,20 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
             setHeatFromForest(dispenserForest, graph.getWeapon());
             graph.clear();
         }
+    }
+
+    @Nullable
+    public DispenserWeapon getByLocation(Location location) {
+        DispenserWeapon result = location2Dispenser.getOrDefault(location, null);
+        if (result == null) {
+            for (DispenserWeapon dispenserWeapon : trackedDispensers.values()) {
+                if (dispenserWeapon.getLocation().equals(location)) {
+                    result = dispenserWeapon;
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -71,26 +90,24 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
 
         // This resets the dispenser's tile state if the plugin did not track it due to a crash or a bug.
         if (!trackedDispensers.containsValue(dispenserWeapon)) {
-            dataContainer.remove(heatKey);
+            //dataContainer.remove(heatKey);
             dataContainer.remove(dispenserHeatUUID);
             dataContainer.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserWeapon.getUuid().toString());
+            state.update();
         }
 
-        int currentAmount = dataContainer.getOrDefault(heatKey, PersistentDataType.INTEGER, 0);
+        int currentAmount = dispenserWeapon.getHeat();
         amount += currentAmount;
+        dispenserWeapon.setHeat(amount);
 
         // Cleans the data container and the list of tracked dispensers.
         if (amount <= 0) {
+            // TODO: Sure? The dispenserGraph will still hold the reference to it...
             trackedDispensers.remove(dispenserWeapon.getUuid());
-            dataContainer.remove(heatKey);
+            //dataContainer.remove(heatKey);
             dataContainer.remove(dispenserHeatUUID);
-        } else {
-            dataContainer.set(heatKey, PersistentDataType.INTEGER, amount);
-            trackedDispensers.put(dispenserWeapon.getUuid(), dispenserWeapon);
+            state.update();
         }
-
-        // Dont forget to save!
-        state.update();
     }
 
 

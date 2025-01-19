@@ -45,24 +45,25 @@ public class WeaponListener implements Listener {
         Vector nodeLoc = facingBlock.getLocation().toVector();
 
         TileState state = (TileState) block.getState();
-        PersistentDataContainer container = state.getPersistentDataContainer();
 
-        DispenserWeapon dispenserWeapon;
-
-        //TODO: Denest this later
-        if (container.has(dispenserHeatUUID)) {
-            UUID uuid = UUID.fromString(container.get(dispenserHeatUUID, PersistentDataType.STRING));
-            if (heatManager.getTrackedDispensers().containsKey(uuid)) {
-                dispenserWeapon = heatManager.getTrackedDispensers().get(uuid);
+        DispenserWeapon dispenserWeapon = heatManager.getByLocation(block.getLocation());
+        if (dispenserWeapon == null) {
+            PersistentDataContainer container = state.getPersistentDataContainer();
+            //TODO: Denest this later
+            if (container.has(dispenserHeatUUID)) {
+                UUID uuid = UUID.fromString(container.get(dispenserHeatUUID, PersistentDataType.STRING));
+                if (heatManager.getTrackedDispensers().containsKey(uuid)) {
+                    dispenserWeapon = heatManager.getTrackedDispensers().get(uuid);
+                } else {
+                    dispenserWeapon = new DispenserWeapon(nodeLoc, block.getLocation());
+                    container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserWeapon.getUuid().toString());
+                    state.update();
+                }
             } else {
                 dispenserWeapon = new DispenserWeapon(nodeLoc, block.getLocation());
                 container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserWeapon.getUuid().toString());
                 state.update();
             }
-        } else {
-            dispenserWeapon = new DispenserWeapon(nodeLoc, block.getLocation());
-            container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserWeapon.getUuid().toString());
-            state.update();
         }
 
         dispenserWeapon.bindToCraft(null);

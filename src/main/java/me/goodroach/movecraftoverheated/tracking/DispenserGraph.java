@@ -51,4 +51,9 @@ public class DispenserGraph {
     public void clear() {
         adjList.clear();
     }
+
+    public void removeDispenser(DispenserWeapon dispenserWeapon) {
+        this.adjList.values().remove(dispenserWeapon);
+        this.adjList.remove(dispenserWeapon);
+    }
 }

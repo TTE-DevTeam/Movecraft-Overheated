@@ -33,6 +33,14 @@ public class DispenserWeapon {
         uuid = UUID.randomUUID();
     }
 
+    public int getHeat() {
+        return this.heatValue;
+    }
+
+    public void setHeat(int value) {
+        this.heatValue = value;
+    }
+
     public Vector getVector() {
         return vector;
     }
