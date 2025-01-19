@@ -61,22 +61,23 @@ public class CheckHeatCommand implements CommandExecutor {
             player.sendMessage(baseMessage);
             return true;
         }
-
-        TileState state = (TileState) dispenser.getState();
-        PersistentDataContainer container = state.getPersistentDataContainer();
-        if (container.get(heatKey, PersistentDataType.INTEGER) == null) {
-            baseMessage = baseMessage.append(Component.text("Current dispenser heat at: 0"));
-            player.sendMessage(baseMessage);
-            return true;
-        }
-
-        int heat = container.get(heatKey, PersistentDataType.INTEGER);
-        baseMessage = baseMessage.append(Component.text("Current dispenser heat at: "))
-                .append(Component.text(heat));
-
+        // TODO: Properly implement this again, i just quickly hacked it back together so it "works"
         DispenserWeapon trackedDispenser = heatManager.getByLocation(dispenser.getLocation());
         UUID uuid = null;
+        int heat = 0;
         if (trackedDispenser == null) {
+            TileState state = (TileState) dispenser.getState();
+            PersistentDataContainer container = state.getPersistentDataContainer();
+            if (container.get(heatKey, PersistentDataType.INTEGER) == null) {
+                baseMessage = baseMessage.append(Component.text("Current dispenser heat at: 0"));
+                player.sendMessage(baseMessage);
+                return true;
+            }
+
+            heat = container.get(heatKey, PersistentDataType.INTEGER);
+            baseMessage = baseMessage.append(Component.text("Current dispenser heat at: "))
+                    .append(Component.text(heat));
+
             // Get UUID and attach it to the message
             String uuidString = container.get(dispenserHeatUUID, PersistentDataType.STRING);
             if (uuidString == null) {
@@ -97,6 +98,16 @@ public class CheckHeatCommand implements CommandExecutor {
             // Get location and attach it to the message
             Map<UUID, DispenserWeapon> trackedDispensers = heatManager.getTrackedDispensers();
             trackedDispenser = trackedDispensers.get(uuid);
+        } else {
+            heat = trackedDispenser.getHeat();
+            uuid = trackedDispenser.getUuid();
+            baseMessage = baseMessage.append(Component.text("Current dispenser heat at: "))
+                    .append(Component.text(heat));
+            baseMessage = baseMessage.append(Component.text("\nUUID: ")).append(Component.text(uuid.toString()));
+            baseMessage = baseMessage.append(Component.text("\nDispenser Location: "))
+                    .append(Component.text(trackedDispenser.getLocation().toString()));
+            player.sendMessage(baseMessage);
+            return true;
         }
 
         if (trackedDispenser == null) {
