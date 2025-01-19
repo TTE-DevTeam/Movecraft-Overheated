@@ -1,7 +1,6 @@
 package me.goodroach.movecraftoverheated.tracking;
 
 import me.goodroach.movecraftoverheated.weapons.Weapon;
-import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,7 +15,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static me.goodroach.movecraftoverheated.MovecraftOverheated.dispenserHeatUUID;
-import static me.goodroach.movecraftoverheated.MovecraftOverheated.heatKey;
 
 public class WeaponHeatManager extends BukkitRunnable implements Listener {
     private final GraphManager graphManager;
@@ -36,7 +34,7 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         trackedDispensers.values().forEach(dispenserWeapon -> location2Dispenser.put(dispenserWeapon.getLocation(), dispenserWeapon));
         long time = System.currentTimeMillis();
         for (DispenserGraph graph : weapons.values()) {
-            coolDispensers(graph.getWeapon());
+            coolDispensers(graph.getWeapon(), graph);
 
             List<List<DispenserWeapon>> dispenserForest = graphManager.getForest(graph);
 
@@ -99,8 +97,8 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         }
 
         int currentAmount = dispenserWeapon.getHeat();
-        amount += currentAmount;
-        dispenserWeapon.setHeat(amount);
+        currentAmount += amount;
+        dispenserWeapon.setHeat(currentAmount);
 
         // Cleans the data container and the list of tracked dispensers.
         if (amount <= 0) {
@@ -118,11 +116,13 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
     private void checkDisaster(Weapon weapon) {
     }
 
-    private void coolDispensers(Weapon weapon) {
+    private void coolDispensers(Weapon weapon, DispenserGraph graph) {
+        // TODO: Only cool the dispensers associated with this weapon, currently it just cools all tracked dispensers...
         if (trackedDispensers.isEmpty()) {
             return;
         }
 
+        // TODO: This does not seem to be correct at all! This will just cool ALL dispensers and not just the ones for this weapon...
         for (DispenserWeapon dispenser : trackedDispensers.values()) {
             // Negative value as it is removing heat
             addDispenserHeat(dispenser, -1 * weapon.heatDissipation());
