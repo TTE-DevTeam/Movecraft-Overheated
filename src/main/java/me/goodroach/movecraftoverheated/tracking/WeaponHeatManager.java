@@ -79,7 +79,9 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         }
 
         // Check if the dispenserWeapon is already in the map, and if so, get the existing one
-        DispenserWeapon existingWeapon = trackedDispensers.get(dispenserWeapon);
+        // TODO: Is this necessary?
+        DispenserWeapon existingWeapon = trackedDispensers.get(dispenserWeapon.getUuid());
+        boolean unknown = existingWeapon == null;
         if (existingWeapon != null) {
             dispenserWeapon = existingWeapon; // Reuse the existing dispenserWeapon object
         }
@@ -107,6 +109,8 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
             //dataContainer.remove(heatKey);
             dataContainer.remove(dispenserHeatUUID);
             state.update();
+        } else if(unknown) {
+            trackedDispensers.put(dispenserWeapon.getUuid(), dispenserWeapon);
         }
     }
 
