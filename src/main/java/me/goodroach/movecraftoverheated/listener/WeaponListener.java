@@ -1,7 +1,7 @@
 package me.goodroach.movecraftoverheated.listener;
 
 import me.goodroach.movecraftoverheated.tracking.DispenserGraph;
-import me.goodroach.movecraftoverheated.tracking.DispenserWeapon;
+import me.goodroach.movecraftoverheated.tracking.DispenserLocation;
 import me.goodroach.movecraftoverheated.tracking.WeaponHeatManager;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,7 +16,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
-import java.util.Set;
 import java.util.UUID;
 
 import static me.goodroach.movecraftoverheated.MovecraftOverheated.dispenserHeatUUID;
@@ -46,28 +45,28 @@ public class WeaponListener implements Listener {
 
         TileState state = (TileState) block.getState();
 
-        DispenserWeapon dispenserWeapon = heatManager.getByLocation(block.getLocation());
-        if (dispenserWeapon == null) {
+        DispenserLocation dispenserLocation = heatManager.getByLocation(block.getLocation());
+        if (dispenserLocation == null) {
             PersistentDataContainer container = state.getPersistentDataContainer();
             //TODO: Denest this later
             if (container.has(dispenserHeatUUID)) {
                 UUID uuid = UUID.fromString(container.get(dispenserHeatUUID, PersistentDataType.STRING));
                 if (heatManager.getTrackedDispensers().containsKey(uuid)) {
-                    dispenserWeapon = heatManager.getTrackedDispensers().get(uuid);
-                    dispenserWeapon.setWeapon(graph.getWeapon());
+                    dispenserLocation = heatManager.getTrackedDispensers().get(uuid);
+                    dispenserLocation.setWeapon(graph.getWeapon());
                 } else {
-                    dispenserWeapon = new DispenserWeapon(nodeLoc, block.getLocation(), graph.getWeapon());
-                    container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserWeapon.getUuid().toString());
+                    dispenserLocation = new DispenserLocation(nodeLoc, block.getLocation(), graph.getWeapon());
+                    container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserLocation.getUuid().toString());
                     state.update();
                 }
             } else {
-                dispenserWeapon = new DispenserWeapon(nodeLoc, block.getLocation(), graph.getWeapon());
-                container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserWeapon.getUuid().toString());
+                dispenserLocation = new DispenserLocation(nodeLoc, block.getLocation(), graph.getWeapon());
+                container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserLocation.getUuid().toString());
                 state.update();
             }
         }
 
-        dispenserWeapon.bindToCraft(null);
-        graph.addDispenser(dispenserWeapon);
+        dispenserLocation.bindToCraft(null);
+        graph.addDispenser(dispenserLocation);
     }
 }

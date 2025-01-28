@@ -1,6 +1,6 @@
 package me.goodroach.movecraftoverheated.listener;
 
-import me.goodroach.movecraftoverheated.tracking.DispenserWeapon;
+import me.goodroach.movecraftoverheated.tracking.DispenserLocation;
 import me.goodroach.movecraftoverheated.tracking.WeaponHeatManager;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
@@ -25,7 +25,7 @@ public class CraftListener implements Listener {
     @EventHandler
     public void onCraftPilot(CraftDetectEvent event) {
         // TODO: Add references to the dispenser weapons to the craft via datatags (weak-set)
-        for (DispenserWeapon dispenser : heatManager.getTrackedDispensers().values()) {
+        for (DispenserLocation dispenser : heatManager.getTrackedDispensers().values()) {
             // Only care about those within the move box, otherwise this might be overkill
             // TODO: Also check if that dispenser will be part of the craft!
             if (event.getCraft().getHitBox().inBounds(dispenser.getLocation().getX(), dispenser.getLocation().getY(), dispenser.getLocation().getZ())) {
@@ -77,7 +77,7 @@ public class CraftListener implements Listener {
 
         // Update the absolute location when a craft is released
         // TODO: Make this prettier, this is not pretty
-        for (DispenserWeapon dispenser : heatManager.getTrackedDispensers().values()) {
+        for (DispenserLocation dispenser : heatManager.getTrackedDispensers().values()) {
             // Only care about those within the move box, otherwise this might be overkill
             if (event.getCraft().getHitBox().inBounds(dispenser.getLocation().getX(), dispenser.getLocation().getY(), dispenser.getLocation().getZ())) {
                 dispenser.unbindFromCraft(event.getCraft());

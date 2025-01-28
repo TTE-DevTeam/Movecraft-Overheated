@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import static me.goodroach.movecraftoverheated.MovecraftOverheated.craftHeatKey;
 
-public class DispenserWeapon {
+public class DispenserLocation {
     private final Vector vector;
     private final Location absolute;
     private final UUID uuid;
@@ -28,7 +28,7 @@ public class DispenserWeapon {
     private WeakReference<Craft> craft = new WeakReference<>(null);
     private int heatValue;
 
-    public DispenserWeapon(Vector vector, Location absolute, Weapon weapon) {
+    public DispenserLocation(Vector vector, Location absolute, Weapon weapon) {
         this.vector = vector;
         this.absolute = absolute;
         this.weapon = weapon;
@@ -137,7 +137,7 @@ public class DispenserWeapon {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        DispenserWeapon that = (DispenserWeapon) obj;
+        DispenserLocation that = (DispenserLocation) obj;
         return this.getLocation().equals(that.getLocation()) && this.getVector().equals(that.getVector());
     }
 

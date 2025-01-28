@@ -14,17 +14,17 @@ public class GraphManager {
     }
 
     // Perform BFS and return a list of connected components (forest)
-    public List<List<DispenserWeapon>> getForest(DispenserGraph graph) {
+    public List<List<DispenserLocation>> getForest(DispenserGraph graph) {
         graph.makeEdges();
-        Map<DispenserWeapon, List<DispenserWeapon>> adjList = graph.getAdjList();
+        Map<DispenserLocation, List<DispenserLocation>> adjList = graph.getAdjList();
 
-        Set<DispenserWeapon> visited = new HashSet<>();
-        List<List<DispenserWeapon>> forest = new ArrayList<>();
+        Set<DispenserLocation> visited = new HashSet<>();
+        List<List<DispenserLocation>> forest = new ArrayList<>();
 
         // Traverse each node in the adjacency list
-        for (DispenserWeapon dispenser : adjList.keySet()) {
+        for (DispenserLocation dispenser : adjList.keySet()) {
             if (!visited.contains(dispenser)) {
-                List<DispenserWeapon> connectedComponent = bfs(dispenser, visited, adjList);
+                List<DispenserLocation> connectedComponent = bfs(dispenser, visited, adjList);
                 forest.add(connectedComponent);
             }
         }
@@ -33,23 +33,23 @@ public class GraphManager {
     }
 
     // BFS algorithm to explore the graph and return the connected component
-    private List<DispenserWeapon> bfs(
-        DispenserWeapon start,
-        Set<DispenserWeapon> visited,
-        Map<DispenserWeapon, List<DispenserWeapon>> adjList
+    private List<DispenserLocation> bfs(
+        DispenserLocation start,
+        Set<DispenserLocation> visited,
+        Map<DispenserLocation, List<DispenserLocation>> adjList
     ) {
-        List<DispenserWeapon> component = new ArrayList<>();
-        Queue<DispenserWeapon> queue = new LinkedList<>();
+        List<DispenserLocation> component = new ArrayList<>();
+        Queue<DispenserLocation> queue = new LinkedList<>();
         queue.offer(start);
         visited.add(start);
 
         // Perform BFS
         while (!queue.isEmpty()) {
-            DispenserWeapon current = queue.poll();
+            DispenserLocation current = queue.poll();
             component.add(current);
 
             // Traverse neighbors of the current node
-            for (DispenserWeapon neighbor : adjList.get(current)) {
+            for (DispenserLocation neighbor : adjList.get(current)) {
                 if (!visited.contains(neighbor)) {
                     visited.add(neighbor);
                     queue.offer(neighbor);

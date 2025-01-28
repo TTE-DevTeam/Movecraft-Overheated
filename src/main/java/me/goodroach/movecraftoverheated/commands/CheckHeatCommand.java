@@ -1,6 +1,6 @@
 package me.goodroach.movecraftoverheated.commands;
 
-import me.goodroach.movecraftoverheated.tracking.DispenserWeapon;
+import me.goodroach.movecraftoverheated.tracking.DispenserLocation;
 import me.goodroach.movecraftoverheated.tracking.WeaponHeatManager;
 import net.countercraft.movecraft.util.ChatUtils;
 import net.kyori.adventure.text.Component;
@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
-import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.RayTraceResult;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -62,7 +60,7 @@ public class CheckHeatCommand implements CommandExecutor {
             return true;
         }
         // TODO: Properly implement this again, i just quickly hacked it back together so it "works"
-        DispenserWeapon trackedDispenser = heatManager.getByLocation(dispenser.getLocation());
+        DispenserLocation trackedDispenser = heatManager.getByLocation(dispenser.getLocation());
         UUID uuid = null;
         int heat = 0;
         if (trackedDispenser == null) {
@@ -96,7 +94,7 @@ public class CheckHeatCommand implements CommandExecutor {
             }
 
             // Get location and attach it to the message
-            Map<UUID, DispenserWeapon> trackedDispensers = heatManager.getTrackedDispensers();
+            Map<UUID, DispenserLocation> trackedDispensers = heatManager.getTrackedDispensers();
             trackedDispenser = trackedDispensers.get(uuid);
         } else {
             heat = trackedDispenser.getHeat();
