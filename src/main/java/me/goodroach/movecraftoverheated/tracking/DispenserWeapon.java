@@ -25,7 +25,6 @@ public class DispenserWeapon {
     private WeakReference<TrackedLocation> tracked = new WeakReference<>(null);
     private WeakReference<Craft> craft = new WeakReference<>(null);
     private int heatValue;
-    private int heatCapacity;
 
     public DispenserWeapon(Vector vector, Location absolute) {
         this.vector = vector;
