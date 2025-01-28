@@ -1,5 +1,6 @@
 package me.goodroach.movecraftoverheated.tracking;
 
+import me.goodroach.movecraftoverheated.weapons.Weapon;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.TrackedLocation;
 import net.countercraft.movecraft.craft.Craft;
@@ -22,13 +23,15 @@ public class DispenserWeapon {
     private final Vector vector;
     private final Location absolute;
     private final UUID uuid;
+    private Weapon weapon;
     private WeakReference<TrackedLocation> tracked = new WeakReference<>(null);
     private WeakReference<Craft> craft = new WeakReference<>(null);
     private int heatValue;
 
-    public DispenserWeapon(Vector vector, Location absolute) {
+    public DispenserWeapon(Vector vector, Location absolute, Weapon weapon) {
         this.vector = vector;
         this.absolute = absolute;
+        this.weapon = weapon;
         uuid = UUID.randomUUID();
     }
 
@@ -141,5 +144,13 @@ public class DispenserWeapon {
     @Override
     public int hashCode() {
         return Objects.hash(getLocation(), getVector());
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
     }
 }

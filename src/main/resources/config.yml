@@ -19,4 +19,15 @@ Weapons:
       - ==: ExplosionDisaster
         ExplosionPower: 4.0
         Threshold: 1.5
-        RandomChance: 0.5
+        RandomChance: 0.
+  - ==: OverheatWeapon
+    Material: FIRE_CHARGE
+    Directions:
+      - "0, 0, 0"
+    HeatRate: 1
+    HeatDissipation: 1
+    Disasters:
+      - ==: ExplosionDisaster
+        ExplosionPower: 4.0
+        Threshold: 1.5
+        RandomChance: 0.
