@@ -55,12 +55,12 @@ public class WeaponListener implements Listener {
                     dispenserLocation = heatManager.getTrackedDispensers().get(uuid);
                     dispenserLocation.setWeapon(graph.getWeapon());
                 } else {
-                    dispenserLocation = new DispenserLocation(nodeLoc, block.getLocation(), graph.getWeapon());
+                    dispenserLocation = new DispenserLocation(nodeLoc, block.getLocation());
                     container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserLocation.getUuid().toString());
                     state.update();
                 }
             } else {
-                dispenserLocation = new DispenserLocation(nodeLoc, block.getLocation(), graph.getWeapon());
+                dispenserLocation = new DispenserLocation(nodeLoc, block.getLocation());
                 container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserLocation.getUuid().toString());
                 state.update();
             }

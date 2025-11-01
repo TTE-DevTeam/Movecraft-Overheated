@@ -23,15 +23,13 @@ public class DispenserLocation {
     private final Vector vector;
     private final Location absolute;
     private final UUID uuid;
-    private Weapon weapon;
     private WeakReference<TrackedLocation> tracked = new WeakReference<>(null);
     private WeakReference<Craft> craft = new WeakReference<>(null);
     private int heatValue;
 
-    public DispenserLocation(Vector vector, Location absolute, Weapon weapon) {
+    public DispenserLocation(Vector vector, Location absolute) {
         this.vector = vector;
         this.absolute = absolute;
-        this.weapon = weapon;
         uuid = UUID.randomUUID();
     }
 
@@ -144,13 +142,5 @@ public class DispenserLocation {
     @Override
     public int hashCode() {
         return Objects.hash(getLocation(), getVector());
-    }
-
-    public Weapon getWeapon() {
-        return weapon;
-    }
-
-    public void setWeapon(Weapon weapon) {
-        this.weapon = weapon;
     }
 }
