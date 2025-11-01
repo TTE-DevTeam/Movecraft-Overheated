@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DispenserGraph {
     // Use concurrent for optimizations later
+    // Represents the actual graph => Represents a dispenser with it's neighbours using the directions of the weapon
     private Map<DispenserLocation, List<DispenserLocation>> adjList = new ConcurrentHashMap<>();
     private final Weapon weapon;
 
@@ -34,6 +35,7 @@ public class DispenserGraph {
             current = dispenser1.getVector();
             for (byte[] dir : weapon.directions()) {
                 next = current.clone().add(new Vector(dir[0], dir[1], dir[2]));
+                // TODO: Implement equals method in DispenserLocation so it can match with a vector with the same coords
                 for (DispenserLocation dispenser2 : adjList.keySet()) {
                     if (dispenser2.getVector().equals(next)) {
                         adjList.computeIfAbsent(dispenser1, k -> new ArrayList<>()).add(dispenser2);
