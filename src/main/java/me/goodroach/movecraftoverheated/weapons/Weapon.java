@@ -43,26 +43,6 @@ public record Weapon(
         this.disasters = disasters;
     }
 
-    @Deprecated(forRemoval = true)
-    public Material getMaterial() {
-        return material;
-    }
-
-    @Deprecated(forRemoval = true)
-    public byte[][] getDirections() {
-        return directions;
-    }
-
-    @Deprecated(forRemoval = true)
-    public int getHeatRate() {
-        return heatRate;
-    }
-
-    @Deprecated(forRemoval = true)
-    public int getHeatDissipation() {
-        return heatDissipation;
-    }
-
     @Override
     public @NotNull Map<String, Object> serialize() {
         Map<String, Object> serialized = Map.of(
