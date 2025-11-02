@@ -1,7 +1,7 @@
 package me.goodroach.movecraftoverheated.listener;
 
 import me.goodroach.movecraftoverheated.tracking.DispenserGraph;
-import me.goodroach.movecraftoverheated.tracking.DispenserLocation;
+import me.goodroach.movecraftoverheated.tracking.DispenserHeatData;
 import me.goodroach.movecraftoverheated.tracking.WeaponHeatManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -53,27 +53,27 @@ public class WeaponListener implements Listener {
 
         TileState state = (TileState) block.getState();
 
-        DispenserLocation dispenserLocation = heatManager.getByLocation(block.getLocation());
-        if (dispenserLocation == null) {
+        DispenserHeatData dispenserHeatData = heatManager.getByLocation(block.getLocation());
+        if (dispenserHeatData == null) {
             PersistentDataContainer container = state.getPersistentDataContainer();
             //TODO: Denest this later
             if (container.has(dispenserHeatUUID)) {
                 UUID uuid = UUID.fromString(container.get(dispenserHeatUUID, PersistentDataType.STRING));
                 if (heatManager.getTrackedDispensers().containsKey(uuid)) {
-                    dispenserLocation = heatManager.getTrackedDispensers().get(uuid);
+                    dispenserHeatData = heatManager.getTrackedDispensers().get(uuid);
                 } else {
-                    dispenserLocation = new DispenserLocation(nodeLoc, block.getLocation());
-                    container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserLocation.getUuid().toString());
+                    dispenserHeatData = new DispenserHeatData(nodeLoc, block.getLocation());
+                    container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserHeatData.getUuid().toString());
                     state.update();
                 }
             } else {
-                dispenserLocation = new DispenserLocation(nodeLoc, block.getLocation());
-                container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserLocation.getUuid().toString());
+                dispenserHeatData = new DispenserHeatData(nodeLoc, block.getLocation());
+                container.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserHeatData.getUuid().toString());
                 state.update();
             }
         }
 
-        dispenserLocation.bindToCraft(null);
-        graph.addDispenser(dispenserLocation);
+        dispenserHeatData.bindToCraft(null);
+        graph.addDispenser(dispenserHeatData);
     }
 }

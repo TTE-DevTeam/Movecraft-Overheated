@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import static me.goodroach.movecraftoverheated.MovecraftOverheated.craftHeatKey;
 
-public class DispenserLocation {
+public class DispenserHeatData {
     private final Vector vector;
     private final Location absolute;
     private final UUID uuid;
@@ -29,7 +29,7 @@ public class DispenserLocation {
     private long lastHeatUpdate;
     private int heatValue;
 
-    public DispenserLocation(Vector vector, Location absolute) {
+    public DispenserHeatData(Vector vector, Location absolute) {
         this.vector = vector;
         this.absolute = absolute;
         this.lastHeatUpdate = absolute.getWorld().getTime();
@@ -143,7 +143,7 @@ public class DispenserLocation {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        DispenserLocation that = (DispenserLocation) obj;
+        DispenserHeatData that = (DispenserHeatData) obj;
         return this.getLocation().equals(that.getLocation()) && this.getVector().equals(that.getVector());
     }
 

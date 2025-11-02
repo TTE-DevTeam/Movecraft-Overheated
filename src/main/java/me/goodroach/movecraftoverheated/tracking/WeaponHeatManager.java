@@ -21,8 +21,8 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
     private final GraphManager graphManager;
     private Map<NamespacedKey, DispenserGraph> weapons = new HashMap<>();
     // TODO: Are synchronized maps necessary? Are we ever accessing this async?
-    private final Map<UUID, DispenserLocation> trackedDispensers = new ConcurrentHashMap();
-    private final Map<Location, DispenserLocation> location2Dispenser = Collections.synchronizedMap(new WeakHashMap<>());
+    private final Map<UUID, DispenserHeatData> trackedDispensers = new ConcurrentHashMap();
+    private final Map<Location, DispenserHeatData> location2Dispenser = Collections.synchronizedMap(new WeakHashMap<>());
 
     public WeaponHeatManager(GraphManager graphManager) {
         this.graphManager = graphManager;
@@ -35,7 +35,7 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         trackedDispensers.values().forEach(dispenserWeapon -> location2Dispenser.put(dispenserWeapon.getLocation(), dispenserWeapon));
         long time = System.currentTimeMillis();
         for (DispenserGraph graph : weapons.values()) {
-            List<List<DispenserLocation>> dispenserForest = graphManager.getForest(graph);
+            List<List<DispenserHeatData>> dispenserForest = graphManager.getForest(graph);
 
             setHeatFromForest(dispenserForest, graph.getWeapon());
             graph.clear();
@@ -43,12 +43,12 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
     }
 
     @Nullable
-    public DispenserLocation getByLocation(Location location) {
-        DispenserLocation result = location2Dispenser.getOrDefault(location, null);
+    public DispenserHeatData getByLocation(Location location) {
+        DispenserHeatData result = location2Dispenser.getOrDefault(location, null);
         if (result == null) {
-            for (DispenserLocation dispenserLocation : trackedDispensers.values()) {
-                if (dispenserLocation.getLocation().equals(location)) {
-                    result = dispenserLocation;
+            for (DispenserHeatData dispenserHeatData : trackedDispensers.values()) {
+                if (dispenserHeatData.getLocation().equals(location)) {
+                    result = dispenserHeatData;
                     break;
                 }
             }
@@ -65,49 +65,49 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
      * due to plugin crashes or bugs.
      * </p>
      *
-     * @param dispenserLocation The dispenser weapon whose heat is being set. This should not be {@code null}.
+     * @param dispenserHeatData The dispenser weapon whose heat is being set. This should not be {@code null}.
      * @param amount The heat amount to set for the dispenser. A value less than or equal to zero will reset
      *               the heat and remove the dispenser from tracking.
      * @throws IllegalArgumentException If the dispenser weapon's block is not of type {@link Material#DISPENSER}.
      */
-    public void addDispenserHeat(DispenserLocation dispenserLocation, int amount) {
-        if (dispenserLocation == null) {
+    public void addDispenserHeat(DispenserHeatData dispenserHeatData, int amount) {
+        if (dispenserHeatData == null) {
             throw new IllegalArgumentException("DispenserWeapon cannot be null");
         }
 
         // Check if the dispenserWeapon is already in the map, and if so, get the existing one
         // TODO: Is this necessary?
-        DispenserLocation existingWeapon = trackedDispensers.get(dispenserLocation.getUuid());
+        DispenserHeatData existingWeapon = trackedDispensers.get(dispenserHeatData.getUuid());
         boolean unknown = existingWeapon == null;
         if (existingWeapon != null) {
-            dispenserLocation = existingWeapon; // Reuse the existing dispenserWeapon object
+            dispenserHeatData = existingWeapon; // Reuse the existing dispenserWeapon object
         }
 
-        Block dispenser = dispenserLocation.getLocation().getBlock();
+        Block dispenser = dispenserHeatData.getLocation().getBlock();
         TileState state = (TileState) dispenser.getState();
         PersistentDataContainer dataContainer = state.getPersistentDataContainer();
 
         // This resets the dispenser's tile state if the plugin did not track it due to a crash or a bug.
-        if (!trackedDispensers.containsValue(dispenserLocation)) {
+        if (!trackedDispensers.containsValue(dispenserHeatData)) {
             //dataContainer.remove(heatKey);
             dataContainer.remove(dispenserHeatUUID);
-            dataContainer.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserLocation.getUuid().toString());
+            dataContainer.set(dispenserHeatUUID, PersistentDataType.STRING, dispenserHeatData.getUuid().toString());
             state.update();
         }
 
-        int currentAmount = dispenserLocation.getHeat();
+        int currentAmount = dispenserHeatData.getHeat();
         currentAmount += amount;
-        dispenserLocation.setHeat(currentAmount);
+        dispenserHeatData.setHeat(currentAmount);
 
         // Cleans the data container and the list of tracked dispensers.
         if (amount <= 0) {
             // TODO: Sure? The dispenserGraph will still hold the reference to it...
-            trackedDispensers.remove(dispenserLocation.getUuid());
+            trackedDispensers.remove(dispenserHeatData.getUuid());
             //dataContainer.remove(heatKey);
             dataContainer.remove(dispenserHeatUUID);
             state.update();
         } else if(unknown) {
-            trackedDispensers.put(dispenserLocation.getUuid(), dispenserLocation);
+            trackedDispensers.put(dispenserHeatData.getUuid(), dispenserHeatData);
         }
     }
 
@@ -123,20 +123,20 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         if (dispenserUUID == null) {
             return;
         }
-        DispenserLocation dispenserLocation = this.trackedDispensers.getOrDefault(dispenserUUID, null);
-        if (dispenserLocation == null) {
+        DispenserHeatData dispenserHeatData = this.trackedDispensers.getOrDefault(dispenserUUID, null);
+        if (dispenserHeatData == null) {
             return;
         } else {
             this.weapons.values().forEach(dispenserGraph -> {
-                dispenserGraph.removeDispenser(dispenserLocation);
+                dispenserGraph.removeDispenser(dispenserHeatData);
             });
             this.trackedDispensers.remove(dispenserUUID);
         }
     }
 
-    private void setHeatFromForest(List<List<DispenserLocation>> forest, OverheatProperties overheatProperties) {
-        for (List<DispenserLocation> dispenserTree : forest) {
-            for (DispenserLocation dispenser : dispenserTree) {
+    private void setHeatFromForest(List<List<DispenserHeatData>> forest, OverheatProperties overheatProperties) {
+        for (List<DispenserHeatData> dispenserTree : forest) {
+            for (DispenserHeatData dispenser : dispenserTree) {
                 addDispenserHeat(dispenser, dispenserTree.size() * overheatProperties.heatRate());
             }
         }
@@ -150,7 +150,7 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         weapons.put(overheatProperties.itemID(), new DispenserGraph(overheatProperties));
     }
 
-    public Map<UUID, DispenserLocation> getTrackedDispensers() {
+    public Map<UUID, DispenserHeatData> getTrackedDispensers() {
         return trackedDispensers;
     }
 }

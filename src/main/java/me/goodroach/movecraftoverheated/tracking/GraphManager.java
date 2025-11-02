@@ -14,17 +14,17 @@ public class GraphManager {
     }
 
     // Perform BFS and return a list of connected components (forest)
-    public List<List<DispenserLocation>> getForest(DispenserGraph graph) {
+    public List<List<DispenserHeatData>> getForest(DispenserGraph graph) {
         graph.makeEdges();
-        Map<DispenserLocation, List<DispenserLocation>> adjList = graph.getAdjList();
+        Map<DispenserHeatData, List<DispenserHeatData>> adjList = graph.getAdjList();
 
-        Set<DispenserLocation> visited = new HashSet<>();
-        List<List<DispenserLocation>> forest = new ArrayList<>();
+        Set<DispenserHeatData> visited = new HashSet<>();
+        List<List<DispenserHeatData>> forest = new ArrayList<>();
 
         // Traverse each node in the adjacency list
-        for (DispenserLocation dispenser : adjList.keySet()) {
+        for (DispenserHeatData dispenser : adjList.keySet()) {
             if (!visited.contains(dispenser)) {
-                List<DispenserLocation> connectedComponent = bfs(dispenser, visited, adjList);
+                List<DispenserHeatData> connectedComponent = bfs(dispenser, visited, adjList);
                 forest.add(connectedComponent);
             }
         }
@@ -33,23 +33,23 @@ public class GraphManager {
     }
 
     // BFS algorithm to explore the graph and return the connected component
-    private List<DispenserLocation> bfs(
-        DispenserLocation start,
-        Set<DispenserLocation> visited,
-        Map<DispenserLocation, List<DispenserLocation>> adjList
+    private List<DispenserHeatData> bfs(
+        DispenserHeatData start,
+        Set<DispenserHeatData> visited,
+        Map<DispenserHeatData, List<DispenserHeatData>> adjList
     ) {
-        List<DispenserLocation> component = new ArrayList<>();
-        Queue<DispenserLocation> queue = new LinkedList<>();
+        List<DispenserHeatData> component = new ArrayList<>();
+        Queue<DispenserHeatData> queue = new LinkedList<>();
         queue.offer(start);
         visited.add(start);
 
         // Perform BFS
         while (!queue.isEmpty()) {
-            DispenserLocation current = queue.poll();
+            DispenserHeatData current = queue.poll();
             component.add(current);
 
             // Traverse neighbors of the current node
-            for (DispenserLocation neighbor : adjList.get(current)) {
+            for (DispenserHeatData neighbor : adjList.get(current)) {
                 if (!visited.contains(neighbor)) {
                     visited.add(neighbor);
                     queue.offer(neighbor);
