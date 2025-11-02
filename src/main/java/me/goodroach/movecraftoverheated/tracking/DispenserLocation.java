@@ -38,9 +38,9 @@ public class DispenserLocation {
 
     public int getHeat() {
         long timeDifference = Math.abs(this.lastHeatUpdate - this.getLocation().getWorld().getTime());
-        double cooledValue = timeDifference * Settings.CooldownPerTick;
+        int cooledValue = (int)(timeDifference * Settings.CooldownPerTick);
         if (cooledValue > 0) {
-            this.heatValue -= Math.round(cooledValue);
+            this.heatValue -= cooledValue;
         }
         return this.heatValue;
     }
