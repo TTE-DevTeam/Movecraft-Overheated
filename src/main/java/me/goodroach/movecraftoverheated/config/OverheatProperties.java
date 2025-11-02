@@ -1,27 +1,19 @@
-package me.goodroach.movecraftoverheated.weapons;
+package me.goodroach.movecraftoverheated.config;
 
 import me.goodroach.movecraftoverheated.disaster.BaseDisaster;
-import me.goodroach.movecraftoverheated.disaster.ExplosionDisaster;
 import me.goodroach.movecraftoverheated.util.SerializationUtil;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.util.NumberConversions;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-public record Weapon(
-    Material material,
+public record OverheatProperties(
+    NamespacedKey itemID,
     byte[][] directions,
     int heatRate,
     int heatDissipation,
@@ -29,14 +21,14 @@ public record Weapon(
 
 ) implements ConfigurationSerializable {
 
-    public Weapon(
-        Material material,
+    public OverheatProperties(
+        NamespacedKey itemID,
         byte[][] directions,
         int heatRate,
         int heatDissipation,
         List<? extends BaseDisaster> disasters
     ) {
-        this.material = material;
+        this.itemID = itemID;
         this.directions = directions;
         this.heatRate = heatRate;
         this.heatDissipation = heatDissipation;
@@ -46,7 +38,7 @@ public record Weapon(
     @Override
     public @NotNull Map<String, Object> serialize() {
         Map<String, Object> serialized = Map.of(
-                "Material", this.material(),
+                "Material", this.itemID(),
                 "Directions", SerializationUtil.serialize2dByteArray(this.directions()),
                 "HeatRate", this.heatRate(),
                 "HeatDissipation", this.heatDissipation()
@@ -62,8 +54,8 @@ public record Weapon(
         return serialized;
     }
 
-    public static Weapon deserialize(Map<String, Object> args) {
-        Material material = Material.getMaterial((String) args.get("Material"));
+    public static OverheatProperties deserialize(Map<String, Object> args) {
+        NamespacedKey itemID = NamespacedKey.fromString((String) args.get("Material"));
         byte[][] directions = SerializationUtil.deserialize2dByteArray(args.get("Directions"));
         int heatRate = NumberConversions.toInt(args.getOrDefault("HeatRate", 0));
         int heatDissipation = NumberConversions.toInt(args.getOrDefault("HeatDissipation", 0));
@@ -71,6 +63,6 @@ public record Weapon(
         List<? extends BaseDisaster> disasters = (List<? extends BaseDisaster>) args.get("Disasters");
         disasters.sort(Comparator.reverseOrder());
 
-        return new Weapon(material, directions, heatRate, heatDissipation, disasters);
+        return new OverheatProperties(itemID, directions, heatRate, heatDissipation, disasters);
     }
 }
