@@ -9,12 +9,9 @@ import java.util.Queue;
 import java.util.Set;
 
 public class GraphManager {
-    public GraphManager() {
-
-    }
 
     // Perform BFS and return a list of connected components (forest)
-    public List<List<DispenserHeatData>> getForest(DispenserGraph graph) {
+    public static List<List<DispenserHeatData>> getForest(DispenserGraph graph) {
         graph.makeEdges();
         Map<DispenserHeatData, List<DispenserHeatData>> adjList = graph.getAdjList();
 
@@ -33,7 +30,7 @@ public class GraphManager {
     }
 
     // BFS algorithm to explore the graph and return the connected component
-    private List<DispenserHeatData> bfs(
+    private static List<DispenserHeatData> bfs(
         DispenserHeatData start,
         Set<DispenserHeatData> visited,
         Map<DispenserHeatData, List<DispenserHeatData>> adjList

@@ -18,14 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import static me.goodroach.movecraftoverheated.MovecraftOverheated.dispenserHeatUUID;
 
 public class WeaponHeatManager extends BukkitRunnable implements Listener {
-    private final GraphManager graphManager;
     private Map<NamespacedKey, DispenserGraph> weapons = new HashMap<>();
     // TODO: Are synchronized maps necessary? Are we ever accessing this async?
     private final Map<UUID, DispenserHeatData> trackedDispensers = new ConcurrentHashMap();
     private final Map<Location, DispenserHeatData> location2Dispenser = Collections.synchronizedMap(new WeakHashMap<>());
 
-    public WeaponHeatManager(GraphManager graphManager) {
-        this.graphManager = graphManager;
+    public WeaponHeatManager() {
     }
 
     @Override
@@ -35,7 +33,7 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         trackedDispensers.values().forEach(dispenserWeapon -> location2Dispenser.put(dispenserWeapon.getLocation(), dispenserWeapon));
         long time = System.currentTimeMillis();
         for (DispenserGraph graph : weapons.values()) {
-            List<List<DispenserHeatData>> dispenserForest = graphManager.getForest(graph);
+            List<List<DispenserHeatData>> dispenserForest = GraphManager.getForest(graph);
 
             setHeatFromForest(dispenserForest, graph.getWeapon());
             graph.clear();

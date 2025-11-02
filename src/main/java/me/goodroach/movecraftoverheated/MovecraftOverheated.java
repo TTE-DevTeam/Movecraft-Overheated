@@ -19,7 +19,6 @@ import java.util.Map;
 public final class MovecraftOverheated extends JavaPlugin {
     private static MovecraftOverheated instance;
     private WeaponHeatManager heatManager;
-    private GraphManager graphManager;
     public static NamespacedKey heatKey;
     public static NamespacedKey craftHeatKey;
     public static NamespacedKey dispenserHeatUUID;
@@ -38,8 +37,7 @@ public final class MovecraftOverheated extends JavaPlugin {
 
         saveDefaultConfig();
 
-        graphManager = new GraphManager();
-        heatManager = new WeaponHeatManager(graphManager);
+        heatManager = new WeaponHeatManager();
         heatManager.runTaskTimer(MovecraftOverheated.getInstance(), 0L, 1L); // Run every 20 ticks (1 second)
 
         //Listeners
