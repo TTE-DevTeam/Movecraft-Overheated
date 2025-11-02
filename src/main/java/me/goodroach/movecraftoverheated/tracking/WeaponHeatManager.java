@@ -35,8 +35,6 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         trackedDispensers.values().forEach(dispenserWeapon -> location2Dispenser.put(dispenserWeapon.getLocation(), dispenserWeapon));
         long time = System.currentTimeMillis();
         for (DispenserGraph graph : weapons.values()) {
-            //coolDispensers(graph.getWeapon(), graph);
-
             List<List<DispenserLocation>> dispenserForest = graphManager.getForest(graph);
 
             setHeatFromForest(dispenserForest, graph.getWeapon());
@@ -115,19 +113,6 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
 
 
     private void checkDisaster(OverheatProperties overheatProperties) {
-    }
-
-    private void coolDispensers(OverheatProperties overheatProperties, DispenserGraph graph) {
-        // TODO: Only cool the dispensers associated with this weapon, currently it just cools all tracked dispensers...
-        if (trackedDispensers.isEmpty()) {
-            return;
-        }
-
-        // TODO: This does not seem to be correct at all! This will just cool ALL dispensers and not just the ones for this weapon...
-        for (DispenserLocation dispenser : trackedDispensers.values()) {
-            // Negative value as it is removing heat
-            addDispenserHeat(dispenser, -1 * overheatProperties.heatDissipation());
-        }
     }
 
     public void removeDispenser(Location location) {

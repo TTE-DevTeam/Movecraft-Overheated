@@ -1,5 +1,6 @@
 package me.goodroach.movecraftoverheated.tracking;
 
+import me.goodroach.movecraftoverheated.config.Settings;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.TrackedLocation;
 import net.countercraft.movecraft.craft.Craft;
@@ -24,15 +25,23 @@ public class DispenserLocation {
     private final UUID uuid;
     private WeakReference<TrackedLocation> tracked = new WeakReference<>(null);
     private WeakReference<Craft> craft = new WeakReference<>(null);
+
+    private long lastHeatUpdate;
     private int heatValue;
 
     public DispenserLocation(Vector vector, Location absolute) {
         this.vector = vector;
         this.absolute = absolute;
+        this.lastHeatUpdate = absolute.getWorld().getTime();
         uuid = UUID.randomUUID();
     }
 
     public int getHeat() {
+        long timeDifference = Math.abs(this.lastHeatUpdate - this.getLocation().getWorld().getTime());
+        double cooledValue = timeDifference * Settings.CooldownPerTick;
+        if (cooledValue > 0) {
+            this.heatValue -= Math.round(cooledValue);
+        }
         return this.heatValue;
     }
 
