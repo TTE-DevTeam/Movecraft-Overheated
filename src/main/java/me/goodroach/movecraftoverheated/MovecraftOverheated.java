@@ -9,7 +9,6 @@ import me.goodroach.movecraftoverheated.listener.WeaponListener;
 import me.goodroach.movecraftoverheated.tracking.GraphManager;
 import me.goodroach.movecraftoverheated.tracking.WeaponHeatManager;
 import me.goodroach.movecraftoverheated.config.OverheatProperties;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -66,27 +65,13 @@ public final class MovecraftOverheated extends JavaPlugin {
         if (getConfig().contains("HeatSinkBlocks")) {
             Map<String, Object> tempMap = getConfig().getConfigurationSection("HeatSinkBlocks").getValues(false);
             for(String str : tempMap.keySet()) {
-                Material type;
-                try {
-                    type = Material.getMaterial(str);
-                }
-                catch(NumberFormatException e) {
-                    type = Material.getMaterial(str);
-                }
-                Settings.HeatSinkBlocks.put(type,(Double)tempMap.get(str));
+                Settings.HeatSinkBlocks.put(NamespacedKey.fromString(str),(Double)tempMap.get(str));
             }
         }
         if (getConfig().contains("RadiatorBlocks")) {
             Map<String, Object> tempMap = getConfig().getConfigurationSection("RadiatorBlocks").getValues(false);
             for(String str : tempMap.keySet()) {
-                Material type;
-                try {
-                    type = Material.getMaterial(str);
-                }
-                catch(NumberFormatException e) {
-                    type = Material.getMaterial(str);
-                }
-                Settings.RadiatorBlocks.put(type,(Double)tempMap.get(str));
+                Settings.RadiatorBlocks.put(NamespacedKey.fromString(str),(Double)tempMap.get(str));
             }
         }
 

@@ -2,6 +2,7 @@ package me.goodroach.movecraftoverheated.config;
 
 import me.goodroach.movecraftoverheated.disaster.BaseDisaster;
 import me.goodroach.movecraftoverheated.util.SerializationUtil;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.util.NumberConversions;

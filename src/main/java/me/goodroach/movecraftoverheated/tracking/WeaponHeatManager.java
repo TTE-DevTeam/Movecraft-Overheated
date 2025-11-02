@@ -3,6 +3,7 @@ package me.goodroach.movecraftoverheated.tracking;
 import me.goodroach.movecraftoverheated.config.OverheatProperties;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.event.Listener;
@@ -18,7 +19,7 @@ import static me.goodroach.movecraftoverheated.MovecraftOverheated.dispenserHeat
 
 public class WeaponHeatManager extends BukkitRunnable implements Listener {
     private final GraphManager graphManager;
-    private Map<Material, DispenserGraph> weapons = new HashMap<>();
+    private Map<NamespacedKey, DispenserGraph> weapons = new HashMap<>();
     // TODO: Are synchronized maps necessary? Are we ever accessing this async?
     private final Map<UUID, DispenserLocation> trackedDispensers = new ConcurrentHashMap();
     private final Map<Location, DispenserLocation> location2Dispenser = Collections.synchronizedMap(new WeakHashMap<>());
@@ -156,12 +157,12 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         }
     }
 
-    public Map<Material, DispenserGraph> getWeapons() {
+    public Map<NamespacedKey, DispenserGraph> getWeapons() {
         return weapons;
     }
 
     public void addWeapon(OverheatProperties overheatProperties) {
-        weapons.put(overheatProperties.material(), new DispenserGraph(overheatProperties));
+        weapons.put(overheatProperties.itemID(), new DispenserGraph(overheatProperties));
     }
 
     public Map<UUID, DispenserLocation> getTrackedDispensers() {

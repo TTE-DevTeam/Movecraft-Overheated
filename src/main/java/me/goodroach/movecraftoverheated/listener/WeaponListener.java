@@ -1,17 +1,26 @@
 package me.goodroach.movecraftoverheated.listener;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import me.goodroach.movecraftoverheated.tracking.DispenserGraph;
 import me.goodroach.movecraftoverheated.tracking.DispenserLocation;
 import me.goodroach.movecraftoverheated.tracking.WeaponHeatManager;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.block.data.type.Dispenser;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemType;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
@@ -29,8 +38,12 @@ public class WeaponListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onDispense(BlockDispenseEvent event) {
         ItemStack item = event.getItem();
+        // TODO: Move to own utility! Avoid using Material.class at all costs and use NamespacedKey instead!
+        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(item);
+        ResourceLocation nmsKey = BuiltInRegistries.ITEM.getKey(nmsItemStack.getItem());
+        NamespacedKey itemID = new NamespacedKey(nmsKey.getNamespace(), nmsKey.getPath());
 
-        DispenserGraph graph = heatManager.getWeapons().get(item.getType());
+        DispenserGraph graph = heatManager.getWeapons().get(itemID);
         if (graph == null) {
             return;
         }
