@@ -8,7 +8,7 @@ import me.goodroach.movecraftoverheated.listener.CraftListener;
 import me.goodroach.movecraftoverheated.listener.WeaponListener;
 import me.goodroach.movecraftoverheated.tracking.GraphManager;
 import me.goodroach.movecraftoverheated.tracking.WeaponHeatManager;
-import me.goodroach.movecraftoverheated.weapons.Weapon;
+import me.goodroach.movecraftoverheated.config.OverheatProperties;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -34,7 +34,7 @@ public final class MovecraftOverheated extends JavaPlugin {
 
         // TODO: Test, then uncomment
         // Once this works, config parsing needs to be changed (see further down)
-        ConfigurationSerialization.registerClass(Weapon.class, "OverheatWeapon");
+        ConfigurationSerialization.registerClass(OverheatProperties.class, "OverheatWeapon");
         ConfigurationSerialization.registerClass(ExplosionDisaster.class, "ExplosionDisaster");
 
         saveDefaultConfig();
@@ -91,8 +91,8 @@ public final class MovecraftOverheated extends JavaPlugin {
         }
 
         if (getConfig().contains("Weapons")) {
-            List<Weapon> weapons = (List<Weapon>) getConfig().getList("Weapons");
-            weapons.forEach(heatManager::addWeapon);
+            List<OverheatProperties> overheatProperties = (List<OverheatProperties>) getConfig().getList("Weapons");
+            overheatProperties.forEach(heatManager::addWeapon);
         }
     }
 

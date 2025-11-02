@@ -1,6 +1,6 @@
 package me.goodroach.movecraftoverheated.tracking;
 
-import me.goodroach.movecraftoverheated.weapons.Weapon;
+import me.goodroach.movecraftoverheated.config.OverheatProperties;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -12,10 +12,10 @@ public class DispenserGraph {
     // Use concurrent for optimizations later
     // Represents the actual graph => Represents a dispenser with it's neighbours using the directions of the weapon
     private Map<DispenserLocation, List<DispenserLocation>> adjList = new ConcurrentHashMap<>();
-    private final Weapon weapon;
+    private final OverheatProperties overheatProperties;
 
-    public DispenserGraph(Weapon weapon) {
-        this.weapon = weapon;
+    public DispenserGraph(OverheatProperties overheatProperties) {
+        this.overheatProperties = overheatProperties;
     }
 
     public Map<DispenserLocation, List<DispenserLocation>> getAdjList() {
@@ -33,7 +33,7 @@ public class DispenserGraph {
 
         for (DispenserLocation dispenser1 : adjList.keySet()) {
             current = dispenser1.getVector();
-            for (byte[] dir : weapon.directions()) {
+            for (byte[] dir : overheatProperties.directions()) {
                 next = current.clone().add(new Vector(dir[0], dir[1], dir[2]));
                 // TODO: Implement equals method in DispenserLocation so it can match with a vector with the same coords
                 for (DispenserLocation dispenser2 : adjList.keySet()) {
@@ -45,8 +45,8 @@ public class DispenserGraph {
         }
     }
 
-    public Weapon getWeapon() {
-        return weapon;
+    public OverheatProperties getWeapon() {
+        return overheatProperties;
     }
 
     public void clear() {

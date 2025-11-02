@@ -1,6 +1,6 @@
 package me.goodroach.movecraftoverheated.tracking;
 
-import me.goodroach.movecraftoverheated.weapons.Weapon;
+import me.goodroach.movecraftoverheated.config.OverheatProperties;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -113,10 +113,10 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
     }
 
 
-    private void checkDisaster(Weapon weapon) {
+    private void checkDisaster(OverheatProperties overheatProperties) {
     }
 
-    private void coolDispensers(Weapon weapon, DispenserGraph graph) {
+    private void coolDispensers(OverheatProperties overheatProperties, DispenserGraph graph) {
         // TODO: Only cool the dispensers associated with this weapon, currently it just cools all tracked dispensers...
         if (trackedDispensers.isEmpty()) {
             return;
@@ -125,7 +125,7 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         // TODO: This does not seem to be correct at all! This will just cool ALL dispensers and not just the ones for this weapon...
         for (DispenserLocation dispenser : trackedDispensers.values()) {
             // Negative value as it is removing heat
-            addDispenserHeat(dispenser, -1 * weapon.heatDissipation());
+            addDispenserHeat(dispenser, -1 * overheatProperties.heatDissipation());
         }
     }
 
@@ -148,10 +148,10 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         }
     }
 
-    private void setHeatFromForest(List<List<DispenserLocation>> forest, Weapon weapon) {
+    private void setHeatFromForest(List<List<DispenserLocation>> forest, OverheatProperties overheatProperties) {
         for (List<DispenserLocation> dispenserTree : forest) {
             for (DispenserLocation dispenser : dispenserTree) {
-                addDispenserHeat(dispenser, dispenserTree.size() * weapon.heatRate());
+                addDispenserHeat(dispenser, dispenserTree.size() * overheatProperties.heatRate());
             }
         }
     }
@@ -160,8 +160,8 @@ public class WeaponHeatManager extends BukkitRunnable implements Listener {
         return weapons;
     }
 
-    public void addWeapon(Weapon weapon) {
-        weapons.put(weapon.material(), new DispenserGraph(weapon));
+    public void addWeapon(OverheatProperties overheatProperties) {
+        weapons.put(overheatProperties.material(), new DispenserGraph(overheatProperties));
     }
 
     public Map<UUID, DispenserLocation> getTrackedDispensers() {

@@ -1,9 +1,7 @@
 package me.goodroach.movecraftoverheated.config;
 
-import me.goodroach.movecraftoverheated.weapons.Weapon;
 import org.bukkit.Material;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
